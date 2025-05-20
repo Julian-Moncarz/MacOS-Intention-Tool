@@ -74,16 +74,16 @@ if [[ "$intent" == *"analysis please"* ]]; then
 fi
 
 # Get duration and validate it's a positive number and not greater than 120
-duration=$(get_input "How long will it take? (minutes)"                          "")
+duration=$(get_input "How long will it take? (minutes, whole numbers only)" "")
 # Validate duration is a number
 if ! [[ "$duration" =~ ^[0-9]+$ ]]; then
-  echo "Invalid duration. Setting to default of 25 minutes."
-  duration=25
+  echo "Invalid duration. Setting to default of 5 minutes."
+  duration=5
 fi
 # Ensure duration is positive and not greater than 120
 if [ "$duration" -le 0 ]; then
-  echo "Duration must be positive. Setting to 25 minutes."
-  duration=25
+  echo "Duration must be positive. Setting to 5 minutes."
+  duration=5
 elif [ "$duration" -gt 120 ]; then
   echo "Duration capped at 120 minutes."
   duration=120
@@ -110,7 +110,7 @@ sleep $(( duration * 60 ))
 # 8. Extension option
 total_duration=$duration
 while true; do
-  extension=$(get_input "Would you like to extend your session? (Enter minutes to extend, or leave empty to finish)" "")
+  extension=$(get_input "Would you like to extend your session? (Enter minutes to extend as whole numbers only, or leave empty to finish)" "")
   
   # If empty, break the loop
   if [[ -z "$extension" ]]; then
