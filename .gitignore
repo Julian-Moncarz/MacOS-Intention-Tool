@@ -30,6 +30,10 @@ wheels/
 # Output files
 focus_insights/
 
+# Data files
+logs.csv
+*.csv
+
 # Environment variables
 .env
 
