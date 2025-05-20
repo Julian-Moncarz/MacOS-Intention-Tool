@@ -18,39 +18,30 @@ echo $$ > "$LOCKFILE"
 # 2. Cold Turkey Blocker CLI
 CT_BIN="/Applications/Cold Turkey Blocker.app/Contents/MacOS/Cold Turkey Blocker"
 
-# Define input function using AppleScript with timeout and auto-respawn
+# Define input function using a simpler AppleScript approach
 get_input() {
   local prompt="$1" default="$2"
   local result
   
-  # Try to get input with a 3-minute timeout
-  result=$(osascript -e "
-    set response to \"\"
-    set startTime to (current date)
-    set timeOutInSeconds to 180  # 3 minutes
-    
-    repeat
-      try
-        set dialogResult to display dialog "$prompt" default answer "$default" buttons {"OK"} default button "OK" giving up after 3
-        if button returned of dialogResult is "OK" then
-          set response to text returned of dialogResult
-          exit repeat
-        end if
-      on error
-        -- Dialog was dismissed or timed out
-      end try
-      
-      -- Check if 3 minutes have passed
-      if (current date) - startTime ≥ timeOutInSeconds then
-        exit repeat
-      end if
-      
-      -- Wait a moment before showing the dialog again
-      delay 1
-    end repeat
-    
-    return response
-  " 2>/dev/null || echo "")
+  # Create a temporary AppleScript file for better reliability
+  local tmp_script=$(mktemp)
+  
+  # Write the AppleScript to the temporary file
+  cat > "$tmp_script" << EOT
+tell application "System Events"
+  activate
+  set theResponse to display dialog "$prompt" default answer "$default" buttons {"OK"} default button "OK"
+  set theText to text returned of theResponse
+  return theText
+end tell
+EOT
+  
+  # Execute the AppleScript file
+  result=$(osascript "$tmp_script" 2>/dev/null || echo "")
+  local status=$?
+  
+  # Clean up the temporary file
+  rm -f "$tmp_script"
   
   # If we got a result, return it
   if [ -n "$result" ]; then
@@ -58,12 +49,9 @@ get_input() {
     return 0
   fi
   
-  # If we timed out, show a notification and restart the script
-  osascript -e 'display notification "Focus session input timed out. Restarting..." with title "Focus Tool"'
-  
-  # Restart the script
-  exec "$0" "$@"
-  exit 1  # Should never reach here
+  # Return empty string for canceled dialogs
+  echo ""
+  return 0
 }
 
 # 3. Initial prompts

@@ -7,9 +7,94 @@ It's designed to be called when a user enters "run analysis" in the intention fi
 """
 
 import os
+import sys
+import subprocess
 import webbrowser
 import tempfile
 from datetime import datetime
+
+# Function to check and install dependencies
+def check_and_install_dependencies():
+    """Check if required packages are installed and install them if needed."""
+    print("Checking required dependencies...")
+    
+    # Get the path to the requirements file
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    requirements_path = os.path.join(script_dir, 'requirements.txt')
+    
+    # Check if requirements.txt exists
+    if not os.path.exists(requirements_path):
+        print("Warning: requirements.txt not found in the script directory.")
+        required_packages = [
+            'pandas>=1.3.0',
+            'matplotlib>=3.4.0',
+            'seaborn>=0.11.0',
+            'flask==2.3.3',
+            'google-generativeai>=0.3.0'
+        ]
+    else:
+        # Read requirements from file
+        with open(requirements_path, 'r') as f:
+            required_packages = [line.strip() for line in f if line.strip()]
+    
+    # Check for virtual environment
+    in_venv = hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+    
+    if not in_venv:
+        print("Creating and activating a virtual environment...")
+        venv_dir = os.path.join(script_dir, 'venv')
+        
+        # Create virtual environment if it doesn't exist
+        if not os.path.exists(venv_dir):
+            try:
+                subprocess.check_call([sys.executable, '-m', 'venv', venv_dir])
+                print(f"Created virtual environment at {venv_dir}")
+            except subprocess.CalledProcessError as e:
+                print(f"Failed to create virtual environment: {e}")
+                print("Continuing with system Python...")
+        
+        # Get the path to the Python executable in the virtual environment
+        if os.name == 'nt':  # Windows
+            venv_python = os.path.join(venv_dir, 'Scripts', 'python.exe')
+        else:  # Unix/Linux/Mac
+            venv_python = os.path.join(venv_dir, 'bin', 'python')
+        
+        if os.path.exists(venv_python):
+            print(f"Restarting script with virtual environment Python: {venv_python}")
+            # Re-run the current script with the virtual environment's Python
+            cmd = [venv_python] + sys.argv
+            os.execv(venv_python, cmd)
+            # The above line replaces the current process, so the code below won't run
+            # if the exec is successful
+    
+    # Check and install missing packages
+    missing_packages = []
+    for package in required_packages:
+        package_name = package.split('==')[0].split('>=')[0].split('>')[0].strip()
+        try:
+            __import__(package_name.replace('-', '_'))
+            print(f"✓ {package_name} is already installed")
+        except ImportError:
+            missing_packages.append(package)
+            print(f"✗ {package_name} needs to be installed")
+    
+    if missing_packages:
+        print("\nInstalling missing packages...")
+        try:
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install'] + missing_packages)
+            print("All required packages have been installed successfully!")
+        except subprocess.CalledProcessError as e:
+            print(f"Error installing packages: {e}")
+            print("Please install the required packages manually using:")
+            print(f"pip install -r {requirements_path}")
+            sys.exit(1)
+    else:
+        print("All required packages are already installed.")
+
+# Check dependencies before importing them
+check_and_install_dependencies()
+
+# Now import the module that requires the dependencies
 import visualize_logs
 
 def read_file_content(file_path, default_content=''):
@@ -442,6 +527,9 @@ def main():
         print("\nAnalysis stopped by user.")
     except Exception as e:
         print(f"Unexpected error: {e}")
+        # Print full traceback for debugging
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()
