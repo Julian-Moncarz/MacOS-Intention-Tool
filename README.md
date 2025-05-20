@@ -51,10 +51,10 @@ To have the focus session script run automatically on system startup, you can se
 
 ```bash
 mkdir -p ~/Library/LaunchAgents
-touch ~/Library/LaunchAgents/com.user.intentionTool.plist
+touch ~/Library/LaunchAgents/com.julianmoncarz.focussession.plist
 ```
 
-2. Edit the plist file with the following content (replace `/path/to/intention_tool` with the actual path to your installation):
+2. Edit the plist file with the following content (replace the path if necessary):
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,19 +62,19 @@ touch ~/Library/LaunchAgents/com.user.intentionTool.plist
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.user.intentionTool</string>
+    <string>com.julianmoncarz.focussession</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/path/to/intention_tool/focus_session.sh</string>
+        <string>/Users/julianmoncarz/intention_tool/focus_session.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <false/>
     <key>StandardOutPath</key>
-    <string>/tmp/intention_tool.log</string>
+    <string>/tmp/focussession.out</string>
     <key>StandardErrorPath</key>
-    <string>/tmp/intention_tool.log</string>
+    <string>/tmp/focussession.err</string>
 </dict>
 </plist>
 ```
@@ -82,10 +82,10 @@ touch ~/Library/LaunchAgents/com.user.intentionTool.plist
 3. Load the Launch Agent:
 
 ```bash
-launchctl load ~/Library/LaunchAgents/com.user.intentionTool.plist
+launchctl load ~/Library/LaunchAgents/com.julianmoncarz.focussession.plist
 ```
 
-The script will now run automatically each time your system starts up, prompting you to set your intention for the day.
+The script will now run automatically each time your system starts up, prompting you to set your intention for the day. The script is designed to restart itself after each session completes, but if you manually terminate it, the Launch Agent won't automatically restart it until the next system startup.
 
 ### Analyzing Your Focus Sessions
 
