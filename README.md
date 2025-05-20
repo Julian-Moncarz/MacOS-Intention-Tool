@@ -45,7 +45,7 @@ This will:
 
 ### Setting Up a Launch Agent (macOS)
 
-To have the focus session script available system-wide and easily accessible, you can set up a macOS Launch Agent:
+To have the focus session script run automatically on system startup, you can set up a macOS Launch Agent:
 
 1. Create a Launch Agent plist file in your user's LaunchAgents directory:
 
@@ -68,7 +68,7 @@ touch ~/Library/LaunchAgents/com.user.intentionTool.plist
         <string>/path/to/intention_tool/focus_session.sh</string>
     </array>
     <key>RunAtLoad</key>
-    <false/>
+    <true/>
     <key>KeepAlive</key>
     <false/>
     <key>StandardOutPath</key>
@@ -85,19 +85,7 @@ touch ~/Library/LaunchAgents/com.user.intentionTool.plist
 launchctl load ~/Library/LaunchAgents/com.user.intentionTool.plist
 ```
 
-4. Create an alias in your shell configuration file (e.g., ~/.zshrc or ~/.bashrc):
-
-```bash
-alias focus="launchctl start com.user.intentionTool"
-```
-
-5. Reload your shell configuration:
-
-```bash
-source ~/.zshrc  # or source ~/.bashrc
-```
-
-Now you can start a focus session from anywhere by simply typing `focus` in your terminal.
+The script will now run automatically each time your system starts up, prompting you to set your intention for the day.
 
 ### Analyzing Your Focus Sessions
 
