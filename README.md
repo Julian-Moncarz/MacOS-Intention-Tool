@@ -43,6 +43,62 @@ This will:
 2. Start tracking your focus session
 3. Log your activities and time spent
 
+### Setting Up a Launch Agent (macOS)
+
+To have the focus session script available system-wide and easily accessible, you can set up a macOS Launch Agent:
+
+1. Create a Launch Agent plist file in your user's LaunchAgents directory:
+
+```bash
+mkdir -p ~/Library/LaunchAgents
+touch ~/Library/LaunchAgents/com.user.intentionTool.plist
+```
+
+2. Edit the plist file with the following content (replace `/path/to/intention_tool` with the actual path to your installation):
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.intentionTool</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/path/to/intention_tool/focus_session.sh</string>
+    </array>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>KeepAlive</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/tmp/intention_tool.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/intention_tool.log</string>
+</dict>
+</plist>
+```
+
+3. Load the Launch Agent:
+
+```bash
+launchctl load ~/Library/LaunchAgents/com.user.intentionTool.plist
+```
+
+4. Create an alias in your shell configuration file (e.g., ~/.zshrc or ~/.bashrc):
+
+```bash
+alias focus="launchctl start com.user.intentionTool"
+```
+
+5. Reload your shell configuration:
+
+```bash
+source ~/.zshrc  # or source ~/.bashrc
+```
+
+Now you can start a focus session from anywhere by simply typing `focus` in your terminal.
+
 ### Analyzing Your Focus Sessions
 
 ```
@@ -64,6 +120,7 @@ This will:
 - `logs.csv`: Stores your focus session data
 - `focus_insights/`: Directory containing AI-generated insights
 - `requirements.txt`: List of Python dependencies
+- `~/Library/LaunchAgents/com.user.intentionTool.plist`: Launch Agent configuration file (after setup)
 
 ## License
 
