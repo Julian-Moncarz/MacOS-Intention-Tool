@@ -6,14 +6,21 @@
 LOCKFILE=/tmp/focus_session.lock
 if [ -e "$LOCKFILE" ]; then
   pid=$(<"$LOCKFILE")
-  if kill -0 "$pid" 2>/dev/null; then
+  lock_time=$(<"${LOCKFILE}.time" 2>/dev/null || echo "0")
+  current_time=$(date +%s)
+  # Check if lockfile is older than 6 hours (21600 seconds)
+  if [ $((current_time - lock_time)) -gt 21600 ]; then
+    echo "Removing stale lockfile (older than 6 hours)" >&2
+    rm -f "$LOCKFILE" "${LOCKFILE}.time"
+  elif kill -0 "$pid" 2>/dev/null; then
     echo "focus_session.sh is already running (PID $pid)" >&2
     exit 1
   else
-    rm -f "$LOCKFILE"
+    rm -f "$LOCKFILE" "${LOCKFILE}.time"
   fi
 fi
 echo $$ > "$LOCKFILE"
+date +%s > "${LOCKFILE}.time"
 
 # 2. Cold Turkey Blocker CLI
 CT_BIN="/Applications/Cold Turkey Blocker.app/Contents/MacOS/Cold Turkey Blocker"
@@ -66,7 +73,22 @@ if [[ "$intent" == *"analysis please"* ]]; then
     exit 0
 fi
 
+# Get duration and validate it's a positive number and not greater than 120
 duration=$(get_input "How long will it take? (minutes)"                          "")
+# Validate duration is a number
+if ! [[ "$duration" =~ ^[0-9]+$ ]]; then
+  echo "Invalid duration. Setting to default of 25 minutes."
+  duration=25
+fi
+# Ensure duration is positive and not greater than 120
+if [ "$duration" -le 0 ]; then
+  echo "Duration must be positive. Setting to 25 minutes."
+  duration=25
+elif [ "$duration" -gt 120 ]; then
+  echo "Duration capped at 120 minutes."
+  duration=120
+fi
+
 sites=$(get_input "Comma-separated list of sites you'll need (e.g. ex.com)"     "")
 
 # 4. Timestamp
@@ -90,9 +112,24 @@ total_duration=$duration
 while true; do
   extension=$(get_input "Would you like to extend your session? (Enter minutes to extend, or leave empty to finish)" "")
   
-  # If empty or not a number, break the loop
-  if [[ -z "$extension" ]] || ! [[ "$extension" =~ ^[0-9]+$ ]]; then
+  # If empty, break the loop
+  if [[ -z "$extension" ]]; then
     break
+  fi
+  
+  # Validate extension is a number
+  if ! [[ "$extension" =~ ^[0-9]+$ ]]; then
+    echo "Invalid extension time. Please enter a number."
+    continue
+  fi
+  
+  # Ensure extension is positive and not greater than 120
+  if [ "$extension" -le 0 ]; then
+    echo "Extension time must be positive."
+    continue
+  elif [ "$extension" -gt 120 ]; then
+    echo "Extension time capped at 120 minutes."
+    extension=120
   fi
   
   # Extend session
@@ -137,7 +174,7 @@ else
 fi
 
 # 13. Cleanup lockfile
-rm -f "$LOCKFILE"
+rm -f "$LOCKFILE" "${LOCKFILE}.time"
 
 # 14. Restart the script
   exec "$0"
