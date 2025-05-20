@@ -1,14 +1,16 @@
-# Focus Session Analysis Tool
+# Intention Tool
 
-A tool for analyzing focus sessions, generating insights, and displaying them in a user-friendly HTML report.
+A productivity tool that helps you track, manage, and analyze your focus sessions. This tool allows you to set intentions for work sessions, record your activities, and gain valuable insights about your productivity patterns through data visualization and AI-powered analysis.
 
 ## Features
 
-- Analyzes focus session data from logs
-- Generates visualizations and charts
-- Creates AI-powered insights using Google's Gemini API
-- Displays results in a clean, responsive HTML report
-- Automatically opens the report in your default web browser
+- **Focus Session Management**: Start and track dedicated work sessions with clear intentions
+- **Activity Logging**: Record what you're working on and for how long
+- **Data Analysis**: Analyze your focus session data from logs
+- **Visualization**: Generate charts and graphs to visualize your productivity patterns
+- **AI Insights**: Get AI-powered insights about your work habits using Google's Gemini API
+- **Reporting**: View results in a clean, responsive HTML report
+- **Seamless Experience**: Automatically opens the report in your default web browser
 
 ## Requirements
 
@@ -30,7 +32,18 @@ A tool for analyzing focus sessions, generating insights, and displaying them in
 
 ## Usage
 
-Run the analysis tool:
+### Starting a Focus Session
+
+```
+./focus_session.sh
+```
+
+This will:
+1. Prompt you to set an intention for your work session
+2. Start tracking your focus session
+3. Log your activities and time spent
+
+### Analyzing Your Focus Sessions
 
 ```
 python show_analysis.py
@@ -38,15 +51,18 @@ python show_analysis.py
 
 This will:
 1. Process your focus session logs
-2. Generate visualizations and insights
-3. Create an HTML report
-4. Automatically open the report in your default browser
+2. Generate visualizations of your productivity patterns
+3. Create AI-powered insights about your work habits
+4. Display everything in an HTML report
+5. Automatically open the report in your default browser
 
 ## Files
 
+- `focus_session.sh`: Shell script for starting and managing focus sessions
 - `show_analysis.py`: Main script that generates and displays the HTML report
 - `visualize_logs.py`: Handles data processing and visualization generation
-- `focus_session.sh`: Shell script for starting focus sessions
+- `logs.csv`: Stores your focus session data
+- `focus_insights/`: Directory containing AI-generated insights
 - `requirements.txt`: List of Python dependencies
 
 ## License
