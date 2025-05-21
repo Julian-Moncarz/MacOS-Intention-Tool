@@ -1,5 +1,17 @@
 # Intention Tool
 
+## Quick Install (macOS)
+
+Install with a single command (no Git required):
+
+```bash
+curl -L https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/install.sh | bash
+```
+
+This will set up everything automatically, including a Launch Agent to start the tool when your system boots.
+
+---
+
 A productivity tool that helps you track, manage, and analyze your focus sessions. This tool allows you to set intentions for work sessions, record your activities, and gain valuable insights about your productivity patterns through data visualization and AI-powered analysis.
 
 ## Features
@@ -19,6 +31,25 @@ A productivity tool that helps you track, manage, and analyze your focus session
 
 ## Setup
 
+### Option 1: Easy One-Line Install (Recommended)
+
+Run this single command in Terminal to set up everything automatically:
+
+```bash
+curl -L https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/install.sh | bash
+```
+
+This will:
+1. Download all necessary files
+2. Set up a Python virtual environment
+3. Install required dependencies
+4. Configure a Launch Agent for automatic startup
+5. Make all scripts executable
+
+### Option 2: Manual Setup
+
+If you prefer to set things up manually:
+
 1. Clone this repository
 2. Create a virtual environment:
    ```
@@ -29,6 +60,7 @@ A productivity tool that helps you track, manage, and analyze your focus session
    ```
    pip install -r requirements.txt
    ```
+4. Follow the Launch Agent setup instructions below if you want the tool to start automatically
 
 ## Usage
 
