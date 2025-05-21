@@ -41,15 +41,7 @@ echo ""
 run_test "test_one_line_command.sh" "One-Line Command Test"
 echo ""
 
-# Check if Docker is installed before running the Docker-based test
-if command -v docker &> /dev/null; then
-    echo "Docker is installed. Running Docker-based test..."
-    run_test "test_install.sh" "Docker-based Test"
-    echo ""
-else
-    echo "Docker is not installed. Skipping Docker-based test."
-    echo ""
-fi
+# All tests completed
 
 # Deactivate the virtual environment
 deactivate

@@ -53,21 +53,7 @@ This test simulates the actual one-line setup command that users would run, usin
 ./test_one_line_command.sh
 ```
 
-### 4. Docker-based Test (`test_install.sh` and `Dockerfile`)
 
-This test uses Docker to create a container that simulates a clean environment for testing the installation script.
-
-**Note:** This test requires Docker to be installed on your system. It's primarily useful for testing the installation script in a completely isolated environment, but it can't fully test the Launch Agent functionality since Docker containers run in a Linux environment.
-
-**What it tests:**
-- Creates a Docker container with a simulated environment
-- Copies the project files into the container
-- Allows you to test the installation script in the container
-
-**How to run:**
-```bash
-./test_install.sh
-```
 
 ## Running All Tests
 
