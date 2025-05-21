@@ -29,7 +29,8 @@ if [[ "$intent" == *"analysis please"* ]]; then
     # Run the analysis script
     python3 "$(dirname "$0")/show_analysis.py"
     echo "Analysis complete! Check your browser for the results."
-    exit 0
+    # Restart the script instead of exiting
+    exec "$0"
 fi
 
 # Get duration and validate it's a positive number and not greater than 120
