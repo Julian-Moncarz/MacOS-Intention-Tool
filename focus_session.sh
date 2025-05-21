@@ -21,7 +21,7 @@ get_input() {
 }
 
 # Initial prompts
-intent=$(get_input "What's your intention right now? (Type 'analysis please' to view your focus stats)" "")
+intent=$(get_input "What's your intention right now? (Type 'analysis please' to view your focus stats - it will take a sec to load)" "")
 
 # Check if the user wants to run analysis
 if [[ "$intent" == *"analysis please"* ]]; then
