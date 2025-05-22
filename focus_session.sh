@@ -2,11 +2,15 @@
 
 # ~/.focus_tools/focus_session.sh
 
-# Check if script is already running (excluding this instance)
-if pgrep -f "$(basename "$0")" | grep -v $$ | grep -v "grep" > /dev/null; then
-  # Show a notification instead of a dialog to avoid blocking
-  osascript -e 'display notification "A focus session is already running" with title "Focus Session"'
-  exit 1
+# Setup lockfile mechanism using flock
+LOCKFILE="/tmp/focus_session.lock"
+
+# Try to acquire the lock
+exec 9>"$LOCKFILE"
+if ! flock -n 9; then
+    # Show a notification if another instance is running
+    osascript -e 'display notification "A focus session is already running" with title "Focus Session"'
+    exit 1
 fi
 
 # Cold Turkey Blocker CLI
