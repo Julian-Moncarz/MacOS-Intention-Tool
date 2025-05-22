@@ -15,6 +15,11 @@ fi
 
 # Cold Turkey Blocker CLI
 CT_BIN="/Applications/Cold Turkey Blocker.app/Contents/MacOS/Cold Turkey Blocker"
+# Check if Cold Turkey is installed
+if [ ! -f "$CT_BIN" ]; then
+    osascript -e 'display dialog "Cold Turkey Blocker not found. Website blocking will be disabled." buttons {"OK"} default button "OK" with title "Warning"'
+    CT_BIN=":"  # no-op command if Cold Turkey not found
+fi
 
 # Define a simple input function using direct AppleScript
 get_input() {
@@ -114,10 +119,25 @@ done_what=$(get_input "What did you get done? Your original intention was: $inte
 learned=$(get_input "What did you learn?"    "")
 lessons=$(get_input "How can you act on that?"           "")
 
-# Ensure logs.csv exists with header
+# Ensure logs.csv exists with header and is writable
 LOGFILE="$(dirname "$0")/logs.csv"
-if [ ! -f "$LOGFILE" ]; then
-  echo "Intent,Duration(min),Websites,Start,Done,Learned,Actions" >> "$LOGFILE"
+LOGFILE_DIR=$(dirname "$LOGFILE")
+
+# Ensure directory exists
+mkdir -p "$LOGFILE_DIR"
+
+# Check if we can write to the log file
+if ! touch "$LOGFILE" 2>/dev/null; then
+    osascript -e 'display dialog "Cannot write to log file. Check permissions." buttons {"OK"} with title "Error"'
+    exit 1
+fi
+
+# Add header if file is empty or doesn't exist
+if [ ! -s "$LOGFILE" ]; then
+    echo "Intent,Duration(min),Websites,Start,Done,Learned,Actions" > "$LOGFILE" || {
+        osascript -e 'display dialog "Failed to write to log file." buttons {"OK"} with title "Error"'
+        exit 1
+    }
 fi
 
 # Append this session
