@@ -46,6 +46,19 @@ This will:
 4. Configure a Launch Agent for automatic startup
 5. Make all scripts executable
 
+### Uninstallation
+
+To completely remove the Intention Tool and all its components, run:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/uninstall.sh | bash
+```
+
+This will:
+1. Stop and unload the Launch Agent
+2. Remove all application files and directories
+3. Clean up temporary files and logs
+
 ### Option 2: Manual Setup
 
 If you prefer to set things up manually:
