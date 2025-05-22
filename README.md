@@ -27,7 +27,7 @@ To see analysis of your intentions at any time:
 3. A detailed report will open in your browser
 
 The analysis includes:
-- A AI report on your intentions, key lessons you have learnt and key action items
+- An AI report on your intentions, key lessons you have learnt and key action items
 - A report on patterns in your intention setting
 - Visual charts of your progress
 
