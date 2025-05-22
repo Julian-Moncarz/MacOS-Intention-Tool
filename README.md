@@ -1,159 +1,93 @@
 # Intention Tool
 
-## Quick Install (macOS)
+A minimalist focus session manager that helps you stay on track by setting clear intentions and tracking your productivity.
 
-Install with a single command (no Git required):
+## Quick Start
 
 ```bash
+# Install with one command
 curl -L https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/install.sh | bash
-```
 
-This will set up everything automatically, including a Launch Agent to start the tool when your system boots.
-
----
-
-A productivity tool that helps you track, manage, and analyze your focus sessions. This tool allows you to set intentions for work sessions, record your activities, and gain valuable insights about your productivity patterns through data visualization and AI-powered analysis.
-
-## Features
-
-- **Focus Session Management**: Start and track dedicated work sessions with clear intentions
-- **Activity Logging**: Record what you're working on and for how long
-- **Data Analysis**: Analyze your focus session data from logs
-- **Visualization**: Generate charts and graphs to visualize your productivity patterns
-- **AI Insights**: Get AI-powered insights about your work habits using Google's Gemini API
-- **Reporting**: View results in a clean, responsive HTML report
-- **Seamless Experience**: Automatically opens the report in your default web browser
-
-## Requirements
-
-- Python 3.9+
-- Required packages are listed in `requirements.txt`
-
-## Setup
-
-### Option 1: Easy One-Line Install (Recommended)
-
-Run this single command in Terminal to set up everything automatically:
-
-```bash
-curl -L https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/install.sh | bash
-```
-
-This will:
-1. Download all necessary files
-2. Set up a Python virtual environment
-3. Install required dependencies
-4. Configure a Launch Agent for automatic startup
-5. Make all scripts executable
-
-### Uninstallation
-
-To completely remove the Intention Tool and all its components, run:
-
-```bash
+# To uninstall
 curl -sSL https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/uninstall.sh | bash
 ```
 
-This will:
-1. Stop and unload the Launch Agent
-2. Remove all application files and directories
-3. Clean up temporary files and logs
+## What to Expect
 
-### Option 2: Manual Setup
+1. **First Run**: The tool will start automatically after installation
+2. **Set Your Intention**: Enter what you plan to focus on
+3. **Set Duration**: Choose how long your focus session will last (default 25 mins)
+4. **Block Distractions**: Optionally block distracting websites
+5. **Work**: Focus on your task until the timer ends
+6. **Review**: After each session, record what you accomplished and learned
 
-If you prefer to set things up manually:
+Your sessions are automatically logged and can be analyzed later for productivity insights.
 
-1. Clone this repository
-2. Create a virtual environment:
+## Viewing Your Progress
+
+To see your focus analysis at any time:
+1. When asked "What's your intention right now?", type: `analysis please`
+2. Wait a moment while it processes your data
+3. A detailed report will open in your browser
+
+The analysis includes:
+- A summary of your focus sessions
+- Patterns in your productivity
+- Insights about your work habits
+- Visual charts of your progress
+
+## Manual Installation (Advanced)
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Julian-Moncarz/MacOS-Intention-Tool.git ~/intention_tool
+   cd ~/intention_tool
    ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-3. Install dependencies:
-   ```
+
+2. Set up the environment:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
    pip install -r requirements.txt
+   chmod +x focus_session.sh
    ```
-4. Follow the Launch Agent setup instructions below if you want the tool to start automatically
 
-## Usage
+3. (Optional) Set up auto-start:
+   ```bash
+   mkdir -p ~/Library/LaunchAgents
+   cat > ~/Library/LaunchAgents/com.user.focussession.plist << 'EOL'
+   <?xml version="1.0" encoding="UTF-8">
+   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+   <plist version="1.0">
+   <dict>
+       <key>Label</key>
+       <string>com.user.focussession</string>
+       <key>ProgramArguments</key>
+       <array>
+           <string>$HOME/intention_tool/focus_session.sh</string>
+       </array>
+       <key>RunAtLoad</key>
+       <true/>
+       <key>KeepAlive</key>
+       <false/>
+   </dict>
+   </plist>
+   EOL
+   launchctl load ~/Library/LaunchAgents/com.user.focussession.plist
+   ```
 
-### Starting a Focus Session
+## Files Overview
 
-```
-./focus_session.sh
-```
+- `focus_session.sh` - Main script that manages focus sessions
+- `show_analysis.py` - Generates productivity reports from your session data
+- `logs.csv` - Stores all your focus session data (created automatically)
+- `install.sh` / `uninstall.sh` - Setup and removal scripts
+- `requirements.txt` - Python dependencies
 
-This will:
-1. Prompt you to set an intention for your work session
-2. Start tracking your focus session
-3. Log your activities and time spent
-
-### Setting Up a Launch Agent (macOS)
-
-To have the focus session script run automatically on system startup, you can set up a macOS Launch Agent:
-
-1. Create a Launch Agent plist file in your user's LaunchAgents directory:
-
-```bash
-mkdir -p ~/Library/LaunchAgents
-touch ~/Library/LaunchAgents/com.julianmoncarz.focussession.plist
-```
-
-2. Edit the plist file with the following content (replace the path if necessary):
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.julianmoncarz.focussession</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>/Users/julianmoncarz/intention_tool/focus_session.sh</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <false/>
-    <key>StandardOutPath</key>
-    <string>/tmp/focussession.out</string>
-    <key>StandardErrorPath</key>
-    <string>/tmp/focussession.err</string>
-</dict>
-</plist>
-```
-
-3. Load the Launch Agent:
-
-```bash
-launchctl load ~/Library/LaunchAgents/com.julianmoncarz.focussession.plist
-```
-
-The script will now run automatically each time your system starts up, prompting you to set your intention for the day. The script is designed to restart itself after each session completes, but if you manually terminate it, the Launch Agent won't automatically restart it until the next system startup.
-
-### Analyzing Your Focus Sessions
-
-```
-python show_analysis.py
-```
-
-This will:
-1. Process your focus session logs
-2. Generate visualizations of your productivity patterns
-3. Create AI-powered insights about your work habits
-4. Display everything in an HTML report
-5. Automatically open the report in your default browser
-
-## Files
-
-- `focus_session.sh`: Shell script for starting and managing focus sessions
-- `show_analysis.py`: Main script that generates and displays the HTML report
-- `visualize_logs.py`: Handles data processing and visualization generation
-- `logs.csv`: Stores your focus session data
-- `focus_insights/`: Directory containing AI-generated insights
-- `requirements.txt`: List of Python dependencies
-- `~/Library/LaunchAgents/com.user.intentionTool.plist`: Launch Agent configuration file (after setup)
+## Requirements
+- macOS
+- Python 3.9+
+- Cold Turkey Blocker (optional, for website blocking)
 
 ## License
 
