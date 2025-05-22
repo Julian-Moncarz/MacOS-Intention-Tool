@@ -1,7 +1,3 @@
-# Intention Tool
-
-A minimalist focus session manager that helps you stay on track by setting clear intentions and tracking your productivity.
-
 ## Quick Start
 
 ```bash
@@ -14,26 +10,25 @@ curl -sSL https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/
 
 ## What to Expect
 
-1. **First Run**: The tool will start automatically after installation
+1. **First Run**: The tool will start automatically after running the installation command
 2. **Set Your Intention**: Enter what you plan to focus on
-3. **Set Duration**: Choose how long your focus session will last (default 25 mins)
-4. **Block Distractions**: Optionally block distracting websites
-5. **Work**: Focus on your task until the timer ends
-6. **Review**: After each session, record what you accomplished and learned
+3. **Set Duration**: Input how long it will take you (default 25 mins)
+4. **Block Distractions**: Say which websites you will need (all others are blocked with Cold Turkey Blocker if you have it installed)
+5. **Do**: Focus on your intention until the timer ends
+6. **Extend**: If you need a bit more time to finish your intention, enter the time you need to extend by
+7. **Reflect**: After each session, record what you got done, what you learned and how you act on what you learned
 
-Your sessions are automatically logged and can be analyzed later for productivity insights.
 
-## Viewing Your Progress
+## Viewing Your Stats
 
-To see your focus analysis at any time:
+To see analysis of your intentions at any time:
 1. When asked "What's your intention right now?", type: `analysis please`
 2. Wait a moment while it processes your data
 3. A detailed report will open in your browser
 
 The analysis includes:
-- A summary of your focus sessions
-- Patterns in your productivity
-- Insights about your work habits
+- A AI report on your intentions, key lessons you have learnt and key action items
+- A report on patterns in your intention setting
 - Visual charts of your progress
 
 ## Manual Installation (Advanced)
