@@ -38,12 +38,62 @@ if [ ! -f "$CT_BIN" ]; then
     CT_BIN=":"  # no-op command if Cold Turkey not found
 fi
 
-# Define a simple input function using direct AppleScript
+# Define an input function with timeout and retry capability
 get_input() {
-  local prompt="$1" default="$2"
+  local prompt="$1" 
+  local default="$2"
+  local timeout_seconds=90  # 1.5 minutes
+  local max_attempts=10     # Maximum retries before giving up entirely
+  local attempt=1
   
-  # Simple, direct AppleScript call
-  osascript -e "tell app \"System Events\" to text returned of (display dialog \"$prompt\" default answer \"$default\" buttons {\"OK\"} default button \"OK\" with title \"Focus Session\")" 2>/dev/null || echo ""
+  while [ $attempt -le $max_attempts ]; do
+    # Add attempt number to prompt if retrying
+    local display_prompt="$prompt"
+    if [ $attempt -gt 1 ]; then
+      display_prompt="[Attempt $attempt] $prompt"
+    fi
+    
+    # Run the dialog and capture the full result
+    local result=$(osascript <<EOF
+tell application "System Events"
+  activate
+  set dialogResult to display dialog "$display_prompt" default answer "$default" buttons {"OK"} default button "OK" with title "Focus Session" giving up after $timeout_seconds
+  
+  if gave up of dialogResult then
+    return "TIMEOUT:true"
+  else
+    return "RESULT:" & text returned of dialogResult
+  end if
+end tell
+EOF
+    )
+    
+    # Check if dialog timed out
+    if [[ "$result" == "TIMEOUT:true" ]]; then
+      echo "Dialog timed out (attempt $attempt/$max_attempts). Showing again..." >&2
+      
+      # Show notification that dialog timed out
+      osascript -e 'display notification "Your focus session dialog timed out and will reappear" with title "Focus Session" sound name "Glass"'
+      
+      # Brief pause before showing again
+      sleep 2
+      
+      ((attempt++))
+    elif [[ "$result" == RESULT:* ]]; then
+      # User responded, extract the actual text
+      echo "${result#RESULT:}"
+      return 0
+    else
+      # Some other error occurred
+      echo ""
+      return 1
+    fi
+  done
+  
+  # Max attempts reached
+  echo "Dialog timed out too many times. Exiting." >&2
+  echo ""
+  return 1
 }
 
 # Initial prompts
