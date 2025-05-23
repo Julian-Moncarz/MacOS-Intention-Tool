@@ -318,7 +318,8 @@ def main():
         print(f"Created output directory: {output_dir}")
     
     # Load and process data
-    csv_path = 'logs.csv'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(script_dir, 'logs.csv')
     print(f"Loading data from {csv_path}...")
     df = load_and_clean_data(csv_path)
     

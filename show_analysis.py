@@ -472,14 +472,16 @@ def generate_html_report(output_dir):
 def run_analysis():
     """Run the analysis and generate the report."""
     try:
-        # Create output directory
-        output_dir = os.path.join('focus_insights', 'latest')
+        # Create output directory in a writable location
+        output_dir = os.path.join(tempfile.gettempdir(), 'focus_insights', 'latest')
         os.makedirs(output_dir, exist_ok=True)
         
         print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Starting analysis...")
         
         # Load and clean data
-        df = visualize_logs.load_and_clean_data('logs.csv')
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        logs_path = os.path.join(script_dir, 'logs.csv')
+        df = visualize_logs.load_and_clean_data(logs_path)
         
         # Generate visualizations and reports
         visualize_logs.create_visualizations(df, output_dir=output_dir)
