@@ -105,6 +105,8 @@ if [[ "$intent" == *"analysis please"* ]]; then
     # Run the analysis script
     python3 "$(dirname "$0")/show_analysis.py"
     echo "Analysis complete! Check your browser for the results."
+    # Clean up lock file before restarting (since exec won't trigger the EXIT trap)
+    rm -f "$LOCKFILE"
     # Restart the script instead of exiting
     exec "$0"
 fi
