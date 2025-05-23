@@ -176,5 +176,8 @@ else
   echo "No intention provided, not logging this session"
 fi
 
+# Clean up lock file before restarting (since exec won't trigger the EXIT trap)
+rm -f "$LOCKFILE"
+
 # Restart the script
 exec "$0"
