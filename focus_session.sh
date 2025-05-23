@@ -2,16 +2,33 @@
 
 # ~/.focus_tools/focus_session.sh
 
-# Setup lockfile mechanism using flock
+# Simple lockfile mechanism
 LOCKFILE="/tmp/focus_session.lock"
 
-# Try to acquire the lock
-exec 9>"$LOCKFILE"
-if ! flock -n 9; then
-    # Show a notification if another instance is running
-    osascript -e 'display notification "A focus session is already running" with title "Focus Session"'
-    exit 1
+# Check if another instance is running
+if [ -e "$LOCKFILE" ]; then
+    # Check if the process is still running
+    LOCK_PID=$(cat "$LOCKFILE" 2>/dev/null)
+    if [ -n "$LOCK_PID" ] && ps -p "$LOCK_PID" >/dev/null 2>&1; then
+        # Show a notification if another instance is running
+        osascript -e 'display notification "A focus session is already running" with title "Focus Session"'
+        exit 1
+    else
+        # Stale lock file from crashed process, remove it
+        rm -f "$LOCKFILE"
+    fi
 fi
+
+# Create lock file with our PID
+echo $$ > "$LOCKFILE"
+
+# Clean up the lock file on exit
+cleanup() {
+    rm -f "$LOCKFILE"
+}
+
+# Set up trap to ensure cleanup happens on script exit
+trap cleanup EXIT
 
 # Cold Turkey Blocker CLI
 CT_BIN="/Applications/Cold Turkey Blocker.app/Contents/MacOS/Cold Turkey Blocker"

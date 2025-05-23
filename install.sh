@@ -39,7 +39,9 @@ cat > ~/Library/LaunchAgents/com.user.focussession.plist << EOL
     <string>com.user.focussession</string>
     <key>ProgramArguments</key>
     <array>
-        <string>$HOME/intention_tool/focus_session.sh</string>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>rm -f /tmp/focus_session.lock; exec $HOME/intention_tool/focus_session.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
