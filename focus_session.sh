@@ -109,20 +109,20 @@ if [[ "$intent" == *"analysis please"* ]]; then
     exec "$0"
 fi
 
-# Get duration and validate it's a positive number and not greater than 120
-duration=$(get_input "How long will it take? (minutes, whole numbers only)" "")
+# Get duration and validate it's a positive number and not greater than 60
+duration=$(get_input "How long will it take? (minutes, whole numbers only, max 60 minutes)" "")
 # Validate duration is a number
 if ! [[ "$duration" =~ ^[0-9]+$ ]]; then
   echo "Invalid duration. Setting to default of 5 minutes."
   duration=5
 fi
-# Ensure duration is positive and not greater than 120
+# Ensure duration is positive and not greater than 60
 if [ "$duration" -le 0 ]; then
   echo "Duration must be positive. Setting to 5 minutes."
   duration=5
-elif [ "$duration" -gt 120 ]; then
-  echo "Duration capped at 120 minutes."
-  duration=120
+elif [ "$duration" -gt 60 ]; then
+  echo "Duration capped at 60 minutes."
+  duration=60
 fi
 
 sites=$(get_input "Comma-separated list of sites you'll need (e.g. ex.com)"     "")
@@ -145,38 +145,43 @@ echo "Focus session started for $duration minutes..."
 sleep $(( duration * 60 ))
 echo "Focus session timer completed."
 
-# Extension option
+# Extension option - only one extension allowed, max 30 minutes
 total_duration=$duration
-while true; do
-  extension=$(get_input "Would you like to extend your session? (Enter minutes to extend as whole numbers only, or leave empty to finish)" "")
+# Flag to track if we've already extended
+extension_used=false
+
+if [ "$extension_used" = false ]; then
+  extension=$(get_input "Would you like to extend your session? (Enter minutes to extend, max 30 minutes, or leave empty to finish)" "")
   
-  # If empty, break the loop
+  # If empty, skip extension
   if [[ -z "$extension" ]]; then
-    break
+    echo "No extension requested."
+  else
+    # Validate extension is a number
+    if ! [[ "$extension" =~ ^[0-9]+$ ]]; then
+      echo "Invalid extension time. No extension applied."
+    else
+      # Ensure extension is positive and not greater than 30
+      if [ "$extension" -le 0 ]; then
+        echo "Extension time must be positive. No extension applied."
+      else
+        # Cap extension at 30 minutes
+        if [ "$extension" -gt 30 ]; then
+          echo "Extension time capped at 30 minutes."
+          extension=30
+        fi
+        
+        # Extend session
+        echo "Extending session by $extension minutes..."
+        total_duration=$((total_duration + extension))
+        extension_used=true
+        
+        # Sleep for the extension duration
+        sleep $((extension * 60))
+      fi
+    fi
   fi
-  
-  # Validate extension is a number
-  if ! [[ "$extension" =~ ^[0-9]+$ ]]; then
-    echo "Invalid extension time. Please enter a number."
-    continue
-  fi
-  
-  # Ensure extension is positive and not greater than 120
-  if [ "$extension" -le 0 ]; then
-    echo "Extension time must be positive."
-    continue
-  elif [ "$extension" -gt 120 ]; then
-    echo "Extension time capped at 120 minutes."
-    extension=120
-  fi
-  
-  # Extend session
-  echo "Extending session by $extension minutes..."
-  total_duration=$((total_duration + extension))
-  
-  # Sleep for the extension duration
-  sleep $((extension * 60))
-done
+fi
 
 # Stop the Cold Turkey block only after user is done with all extensions
 "$CT_BIN" -stop "Focus-Session"
