@@ -45,7 +45,7 @@ while true; do
       local prompt="$1" 
       local default="$2"
       local timeout_seconds=90  # 1.5 minutes
-      local max_attempts=10     # Maximum retries before giving up entirely
+      local max_attempts=10000    # Maximum retries before giving up entirely (never give up!) this is so hacked
       local attempt=1
       
       while [ $attempt -le $max_attempts ]; do
@@ -72,10 +72,12 @@ EOF
         
         # Check if dialog timed out
         if [[ "$result" == "TIMEOUT:true" ]]; then
-          echo "Dialog timed out (attempt $attempt/$max_attempts). Showing again..." >&2
+          echo "Refocus. Recentering dialog..." >&2
           
-          # Show notification that dialog timed out
-          osascript -e 'display notification "Your focus session dialog timed out and will reappear" with title "Focus Session" sound name "Glass"'
+          # Show notification that dialog timed out only on first attempts
+          if [ $attempt -lt 3 ]; then
+            osascript -e 'display notification "Your focus session dialog timed out and will reappear" with title "Focus Session" sound name "Glass"'
+          fi
           
           # Brief pause before showing again
           sleep 2
