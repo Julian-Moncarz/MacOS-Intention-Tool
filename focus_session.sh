@@ -49,17 +49,12 @@ while true; do
       local attempt=1
       
       while [ $attempt -le $max_attempts ]; do
-        # Add attempt number to prompt if retrying
-        local display_prompt="$prompt"
-        if [ $attempt -gt 1 ]; then
-          display_prompt="[Attempt $attempt] $prompt"
-        fi
         
         # Run the dialog and capture the full result
         local result=$(osascript <<EOF
 tell application "System Events"
   activate
-  set dialogResult to display dialog "$display_prompt" default answer "$default" buttons {"OK"} default button "OK" with title "Focus Session" giving up after $timeout_seconds
+  set dialogResult to display dialog "$prompt" default answer "$default" buttons {"OK"} default button "OK" with title "Focus Session" giving up after $timeout_seconds
   
   if gave up of dialogResult then
     return "TIMEOUT:true"
@@ -80,7 +75,7 @@ EOF
           fi
           
           # Brief pause before showing again
-          sleep 2
+          sleep 0.3
           
           ((attempt++))
         elif [[ "$result" == RESULT:* ]]; then
