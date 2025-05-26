@@ -7,6 +7,16 @@ LOCKFILE="/tmp/focus_session.lock"
 
 # Main execution loop
 while true; do
+    # Clear all session variables for a fresh start
+    intent=""
+    duration=""
+    sites=""
+    extension=""
+    done_what=""
+    learned=""
+    lessons=""
+    extension_used=false
+
     # Check if another instance is running
     if [ -e "$LOCKFILE" ]; then
         # Check if the process is still running
