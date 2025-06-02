@@ -29,6 +29,7 @@ wheels/
 
 # Output files
 focus_insights/
+focus_timeline_report/
 
 # Data files
 logs.csv
