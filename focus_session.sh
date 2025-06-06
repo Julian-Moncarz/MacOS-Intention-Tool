@@ -126,14 +126,20 @@ EOF
         
         # Check if the user wants to run analysis
         if [[ "$intent" == *"analysis please"* ]]; then
-            echo "Generating your focus session analysis..."
+            echo "Generating your focus session analysis and timeline visualizations..."
             
-            # Start the Python script in background
+            # Start the Python analysis script in background
             python3 "$(dirname "$0")/show_analysis.py" > /tmp/focus_analysis.log 2>&1 &
             ANALYSIS_PID=$!
             
+            # Start the daily timeline visualization script in background
+            python3 "$(dirname "$0")/daily_timeline_viz.py" > /tmp/timeline_viz.log 2>&1 &
+            TIMELINE_PID=$!
+            
             echo "Analysis started in background (PID: $ANALYSIS_PID). Check your browser for results shortly."
-            echo "Monitor progress with: tail -f /tmp/focus_analysis.log"
+            echo "Timeline visualization started in background (PID: $TIMELINE_PID). Weekly charts will be generated."
+            echo "Monitor analysis progress with: tail -f /tmp/focus_analysis.log"
+            echo "Monitor timeline progress with: tail -f /tmp/timeline_viz.log"
             
             # Clean up lock file before continuing the loop
             rm -f "$LOCKFILE"
@@ -170,14 +176,50 @@ EOF
             # Sites prompt
             while true; do
                 sites_input=$(get_input "Comma-separated list of sites you'll need (e.g. ex.com)" "${sites:-}")
-                
+
                 if [ "$sites_input" = "BACK_REQUESTED" ]; then
-                    break  # Go back to duration prompt
+                    # Clear duration and go back to duration prompt
+                    duration=""
+                    break # Go back to duration prompt
+                fi
+
+                # Process sites_input to handle '*.*'
+                local processed_sites_list=""
+                local found_star_dot_star_pattern=false
+
+                if [[ -n "$sites_input" ]]; then # Only process if sites_input is not empty
+                    # Use a temporary IFS for splitting by comma
+                    local OLD_IFS="$IFS"
+                    IFS=','
+                    # word splitting is intentional here for array creation
+                    # shellcheck disable=SC2206
+                    local site_array=($sites_input) # Convert string to array
+                    IFS="$OLD_IFS" # Restore IFS
+
+                    for site_entry in "${site_array[@]}"; do
+                        # Trim leading whitespace
+                        local trimmed_entry="${site_entry#"${site_entry%%[![:space:]]*}"}"
+                        # Trim trailing whitespace
+                        trimmed_entry="${trimmed_entry%"${trimmed_entry##*[![:space:]]}"}"
+                        
+                        if [ "$trimmed_entry" = "*.*" ]; then
+                            found_star_dot_star_pattern=true
+                        elif [ -n "$trimmed_entry" ]; then # Add if not empty and not '*.*'
+                            if [ -z "$processed_sites_list" ]; then
+                                processed_sites_list="$trimmed_entry"
+                            else
+                                processed_sites_list="$processed_sites_list,$trimmed_entry"
+                            fi
+                        fi
+                    done
+                fi
+
+                if [ "$found_star_dot_star_pattern" = true ]; then
+                    osascript -e 'display notification "The input ''*.*'' is not a valid site exception and has been removed. Other valid sites (if any) will be processed." with title "Focus Session Alert"'
                 fi
                 
-                # Only update sites if not going back
-                sites="$sites_input"
-                
+                sites="$processed_sites_list" # Update the main sites variable
+
                 # If we got here, all setup prompts completed successfully
                 break 3  # Break out of all three nested loops
             done
