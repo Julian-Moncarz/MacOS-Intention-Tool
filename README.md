@@ -14,7 +14,7 @@ Keep your Intention Tool up to date with new features and bug fixes:
 
 ```bash
 # Update to latest version (one command)
-cd ~/intention_tool && ./update.sh
+curl -sSL https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/update.sh | bash
 ```
 
 The update script will:

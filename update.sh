@@ -6,9 +6,19 @@
 echo "=== Intention Tool Updater ==="
 echo "Updating Intention Tool to the latest version..."
 
-# Check if we're in the intention_tool directory
+# Check if intention_tool directory exists
+if [[ ! -d "$HOME/intention_tool" ]]; then
+    echo "❌ Error: Intention Tool is not installed. Please install it first using:"
+    echo "curl -L https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/install.sh | bash"
+    exit 1
+fi
+
+# Navigate to the intention_tool directory
+cd "$HOME/intention_tool"
+
+# Check if this looks like a valid intention_tool installation
 if [[ ! -f "focus_session.sh" ]]; then
-    echo "❌ Error: Please run this script from the intention_tool directory"
+    echo "❌ Error: Invalid Intention Tool installation found in ~/intention_tool"
     exit 1
 fi
 
