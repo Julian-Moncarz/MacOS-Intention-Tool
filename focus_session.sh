@@ -232,6 +232,12 @@ EOF
     # Start the Cold Turkey block
     "$CT_BIN" -start "Focus-Session"
 
+    # Add permanent exceptions for local files and analysis access
+    "$CT_BIN" -add "Focus-Session" -exception "file://*"
+    "$CT_BIN" -add "Focus-Session" -exception "localhost"
+    "$CT_BIN" -add "Focus-Session" -exception "127.0.0.1"
+    "$CT_BIN" -add "Focus-Session" -exception "*.local"
+
     # Whitelist exceptions
     IFS=',' read -ra DOMAIN_ARRAY <<< "$sites"
     for domain in "${DOMAIN_ARRAY[@]}"; do
@@ -284,6 +290,12 @@ EOF
                         # Extend session - restart Cold Turkey and sleep
                         echo "Extending session by $extension minutes..."
                         "$CT_BIN" -start "Focus-Session"
+                        
+                        # Add permanent exceptions for local files and analysis access
+                        "$CT_BIN" -add "Focus-Session" -exception "file://*"
+                        "$CT_BIN" -add "Focus-Session" -exception "localhost"
+                        "$CT_BIN" -add "Focus-Session" -exception "127.0.0.1"
+                        "$CT_BIN" -add "Focus-Session" -exception "*.local"
                         
                         # Re-apply whitelist exceptions
                         IFS=',' read -ra DOMAIN_ARRAY <<< "$sites"
