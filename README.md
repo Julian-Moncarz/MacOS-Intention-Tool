@@ -8,6 +8,23 @@ curl -L https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/ma
 curl -sSL https://raw.githubusercontent.com/Julian-Moncarz/MacOS-Intention-Tool/main/uninstall.sh | bash
 ```
 
+## Updating
+
+Keep your Intention Tool up to date with new features and bug fixes:
+
+```bash
+# Update to latest version (one command)
+cd ~/intention_tool && ./update.sh
+```
+
+The update script will:
+- ✅ Download the latest version from GitHub
+- ✅ Preserve all your data (logs, insights, virtual environment)
+- ✅ Update only the code files and dependencies
+- ✅ Restart the service automatically
+
+Your productivity data, custom configurations, and generated insights remain completely intact during updates.
+
 ## What to Expect
 
 1. **First Run**: The tool will start automatically after running the installation command
@@ -51,7 +68,7 @@ The analysis includes:
    ```bash
    mkdir -p ~/Library/LaunchAgents
    cat > ~/Library/LaunchAgents/com.user.focussession.plist << 'EOL'
-   <?xml version="1.0" encoding="UTF-8">
+   <?xml version="1.0" encoding="UTF-8"?>
    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
    <plist version="1.0">
    <dict>
@@ -80,7 +97,7 @@ The analysis includes:
 - `focus_session.sh` - Main script that manages focus sessions
 - `show_analysis.py` - Generates productivity reports from your session data
 - `logs.csv` - Stores all your focus session data (created automatically)
-- `install.sh` / `uninstall.sh` - Setup and removal scripts
+- `install.sh` / `uninstall.sh` / `update.sh` - Setup, removal, and update scripts
 - `requirements.txt` - Python dependencies
 
 ## Requirements
