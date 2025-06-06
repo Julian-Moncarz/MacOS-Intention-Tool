@@ -23,7 +23,7 @@ echo "Backing up user data..."
 # Backup virtual environment
 if [[ -d "venv" ]]; then
     echo "  - Backing up virtual environment..."
-    cp -r venv "$BACKUP_DIR/"
+    cp -a venv "$BACKUP_DIR/"
 fi
 
 # Backup logs and CSV files
