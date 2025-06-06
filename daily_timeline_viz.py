@@ -247,8 +247,9 @@ def generate_html_report(df):
             weekly_sessions[day_of_week] = day_data.sort_values('timestamp')
         weekly_sessions_dict[week_start] = weekly_sessions
     
-    # Create output directory
-    output_dir = "focus_timeline_report"
+    # Create output directory relative to script location
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(script_dir, "focus_timeline_report")
     os.makedirs(output_dir, exist_ok=True)
     
     # Generate timeline for each week
