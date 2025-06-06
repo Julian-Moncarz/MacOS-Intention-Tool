@@ -476,7 +476,9 @@ def generate_html_report(df):
 
 def main():
     """Main function to generate the timeline report"""
-    csv_file = "logs.csv"
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_file = os.path.join(script_dir, "logs.csv")
     
     if not os.path.exists(csv_file):
         print(f"Error: {csv_file} not found!")
